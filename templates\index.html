@@ -1,33 +1,117 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Online Exam Monitoring</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
-
-  <style>
-    body { text-align: center; font-family: Arial; }
-    video { width: 480px; border: 3px solid black; }
-    #alertBox {
-      display: none;
-      background: red;
-      color: white;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 18px;
-    }
-  </style>
+.instructions h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            padding: 8px 0;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .status-item { min-width: 140px; }
+            .exam-info { flex-direction: column; gap: 15px; }
+        }
+    </style>
+    
+    <!-- Font Awesome للرموز -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
-  <h2>Exam Monitoring System</h2>
-
-  <video id="video" autoplay muted></video>
-
-  <div id="alertBox">⚠️ Warning</div>
-
-  <script src="/static/proctor.js"></script>
+    <div class="container">
+        <!-- الرأس -->
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Online Exam Proctoring</h1>
+            <p>Real-time monitoring for secure online examinations</p>
+        </div>
+        
+        <!-- معلومات الامتحان -->
+        <div class="exam-info">
+            <div class="info-item">
+                <i class="fas fa-user"></i>
+                <span>Student ID: <strong>STU-2024-001</strong></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <span>Exam Time: <strong class="timer" id="examTimer">120:00</strong></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-book"></i>
+                <span>Subject: <strong>Computer Science</strong></span>
+            </div>
+        </div>
+        
+        <!-- الكاميرا -->
+        <div class="video-container">
+            <h3><i class="fas fa-video"></i> Camera Monitoring</h3>
+            <video id="video" autoplay muted playsinline></video>
+            
+            <!-- صندوق التنبيهات -->
+            <div class="alert-box" id="alertBox">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="alertMessage">Warning: Face not detected!</span>
+            </div>
+            
+            <!-- شريط الحالة -->
+            <div class="status-bar">
+                <div class="status-item active" id="cameraStatus">
+                    <i class="fas fa-camera"></i><br>
+                    Camera: <span>Active</span>
+                </div>
+                <div class="status-item active" id="faceStatus">
+                    <i class="fas fa-user"></i><br>
+                    Face: <span>Detected</span>
+                </div>
+                <div class="status-item active" id="lightStatus">
+                    <i class="fas fa-lightbulb"></i><br>
+                    Lighting: <span>Good</span>
+                </div>
+                <div class="status-item active" id="audioStatus">
+                    <i class="fas fa-volume-up"></i><br>
+                    Audio: <span>Muted</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- التعليمات -->
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Exam Rules</h3>
+            <ul>
+                <li>Keep your face visible to the camera at all times</li>
+                <li>Do not leave the exam window or switch tabs</li>
+                <li>No talking or communicating with others</li>
+                <li>Ensure good lighting in the room</li>
+                <li>Do not use any unauthorized materials</li>
+                <li>Keep your microphone muted throughout the exam</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='proctor.js') }}"></script>
 </body>
-</ht
+</html>
