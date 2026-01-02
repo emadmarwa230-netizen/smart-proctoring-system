@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 
-app = Flask(name)
+app = Flask(name)  # تصحيح: name بدل name
 
 alerts = []
 
@@ -22,5 +22,5 @@ def teacher():
         "alerts": alerts
     }
 
-if name == "main":
+if name == "main":  # تصحيح: name بدل name
     app.run(host="0.0.0.0", port=5000)
