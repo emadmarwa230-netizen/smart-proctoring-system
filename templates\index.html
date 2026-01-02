@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Online Exam Monitoring</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+
+  <style>
+    body { text-align: center; font-family: Arial; }
+    video { width: 480px; border: 3px solid black; }
+    #alertBox {
+      display: none;
+      background: red;
+      color: white;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Exam Monitoring System</h2>
+
+  <video id="video" autoplay muted></video>
+
+  <div id="alertBox">⚠️ Warning</div>
+
+  <script src="/static/proctor.js"></script>
+</body>
+</ht
