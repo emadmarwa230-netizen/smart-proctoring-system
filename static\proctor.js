@@ -1,76 +1,51 @@
-const video = document.getElementById("video");
-const alertBox = document.getElementById("alertBox");
-
-let lastLight = null;
-
-function showAlert(msg) {
-  alertBox.innerText = "⚠️ " + msg;
-  alertBox.style.display = "block";
-
-  fetch("/alert", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      student: "Student 1",
-      alert: msg
-    })
-  });
+// تهيئة التطبيق
+async function initializeApp() {
+    console.log('🚀 Initializing Proctoring System...');
+    
+    // إعداد الواجهة
+    updateStatus(cameraStatus, 'warning', 'Starting...');
+    updateStatus(faceStatus, 'warning', 'Waiting...');
+    updateStatus(lightStatus, 'warning', 'Checking...');
+    updateStatus(audioStatus, 'active', 'Muted');
+    
+    // بدء الكاميرا
+    await startCamera();
+    
+    // إعداد مؤقت الامتحان
+    setupExamTimer();
+    
+    // رسالة ترحيب
+    setTimeout(() => {
+        console.log('✅ Proctoring System Ready');
+    }, 2000);
 }
 
-function hideAlert() {
-  alertBox.style.display = "none";
+// بدء التطبيق عند تحميل الصفحة
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
 }
 
-async function startCamera() {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  video.srcObject = stream;
-}
-
-function checkLighting() {
-  const canvas = document.createElement("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(video, 0, 0);
-
-  const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-  let sum = 0;
-  for (let i = 0; i < data.length; i += 4) {
-    sum += (data[i] + data[i+1] + data[i+2]) / 3;
-  }
-  const brightness = sum / (data.length / 4);
-
-  if (lastLight && Math.abs(brightness - lastLight) > 40) {
-    showAlert("Lighting changed");
-  }
-
-  lastLight = brightness;
-}
-
-async function loadModel() {
-  return await faceLandmarksDetection.load(
-    faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
-  );
-}
-
-startCamera();
-
-loadModel().then(model => {
-  setInterval(async () => {
-    const faces = await model.estimateFaces({ input: video });
-
-    if (faces.length === 0) {
-      showAlert("No face detected");
-      return;
+// تنظيف عند إغلاق الصفحة
+window.addEventListener('beforeunload', () => {
+    console.log('🛑 Cleaning up...');
+    
+    // إيقاف الكاميرا
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
     }
-
-    if (faces.length > 1) {
-      showAlert("More than one face detected");
-      return;
-    }
-
-    checkLighting();
-    hideAlert();
-
-  }, 2000);
+    
+    // مسح المؤقتات
+    if (alertTimeout) clearTimeout(alertTimeout);
 });
+
+// تصدير الدوال للاختبار (إذا لزم الأمر)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        showAlert,
+        hideAlert,
+        checkLighting,
+        startCamera
+    };
+}
